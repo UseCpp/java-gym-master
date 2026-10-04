@@ -34,7 +34,7 @@ public class Timetable {
     public Collection<CounterOfTrainings> getCountByCoaches() {
         return trainingCountPerCoach.values()
                 .stream()
-                .sorted(Comparator.comparing(CounterOfTrainings::getTrainingCount).reversed())
+                .sorted(Comparator.comparing(CounterOfTrainings::getTrainingCount).reversed().thenComparing(CounterOfTrainings::getCoach))
                 .toList();
     }
 }

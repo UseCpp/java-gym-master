@@ -18,8 +18,6 @@ public class TimetableTest {
         for (var counter : counters) {
             if (counter.getCoach().equals(coach)) {
                 return counter.getTrainingCount() == expectedValue;
-            } else {
-                return false;
             }
         }
         return false;
@@ -130,7 +128,6 @@ public class TimetableTest {
         Assertions.assertTrue(containsCounterFor(coach, 2, timetable.getCountByCoaches()));
     }
 
-
     @Test
     void testSortedCountTable() {
         Timetable timetable = new Timetable();
@@ -151,4 +148,19 @@ public class TimetableTest {
         Assertions.assertEquals(List.of(first, second, third), timetable.getCountByCoaches().stream().map(CounterOfTrainings::getCoach).toList());
     }
 
+    @Test
+    void testSimilarTrainingCountPerCoach() {
+        Timetable timetable = new Timetable();
+
+        Group group = new Group("Акробатика для детей", Age.CHILD, 60);
+        Coach first = new Coach("Васильев", "Николай", "Сергеевич");
+        Coach second = new Coach("Алексеев", "Николай", "Сергеевич");
+        timetable.addNewTrainingSession(new TrainingSession(group, first, DayOfWeek.MONDAY, new TimeOfDay(13, 0)));
+        timetable.addNewTrainingSession(new TrainingSession(group, first, DayOfWeek.TUESDAY, new TimeOfDay(13, 0)));
+
+        timetable.addNewTrainingSession(new TrainingSession(group, second, DayOfWeek.THURSDAY, new TimeOfDay(13, 0)));
+        timetable.addNewTrainingSession(new TrainingSession(group, second, DayOfWeek.FRIDAY, new TimeOfDay(13, 0)));
+
+        Assertions.assertEquals(List.of(second, first), timetable.getCountByCoaches().stream().map(CounterOfTrainings::getCoach).toList());
+    }
 }
