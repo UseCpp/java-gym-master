@@ -107,6 +107,98 @@ public class TimetableTest {
     }
 
     @Test
+    void testGetManyTrainingSessionsForDayAndTime() {
+        Timetable timetable = new Timetable();
+
+        Group groupChild = new Group("Акробатика для детей", Age.CHILD, 60);
+        Coach coach1 = new Coach("Васильев", "Николай", "Сергеевич");
+        TrainingSession childTrainingSession = new TrainingSession(groupChild, coach1,
+                DayOfWeek.MONDAY, new TimeOfDay(13, 0));
+
+        timetable.addNewTrainingSession(childTrainingSession);
+
+        Coach coach2 = new Coach("Петров", "Николай", "Сергеевич");
+
+        Group groupAdult = new Group("Акробатика для взрослых", Age.ADULT, 90);
+        TrainingSession adultTrainingSession = new TrainingSession(groupAdult, coach2,
+                DayOfWeek.MONDAY, new TimeOfDay(13, 0));
+
+        timetable.addNewTrainingSession(adultTrainingSession);
+
+        Assertions.assertEquals(
+                List.of(childTrainingSession, adultTrainingSession),
+                timetable.getTrainingSessionsForDayAndTime(
+                        DayOfWeek.MONDAY,
+                        new TimeOfDay(13, 0)
+                )
+        );
+    }
+
+    @Test
+    void testSortedByTimeTrainings() {
+        Timetable timetable = new Timetable();
+
+        Group group = new Group("Акробатика для детей", Age.CHILD, 60);
+        Coach coach = new Coach("Васильев", "Николай", "Сергеевич");
+        TrainingSession session1 = new TrainingSession(group, coach,
+                DayOfWeek.MONDAY, new TimeOfDay(13, 0));
+
+        TrainingSession session2 = new TrainingSession(group, coach,
+                DayOfWeek.MONDAY, new TimeOfDay(14, 0));
+
+        TrainingSession session3 = new TrainingSession(group, coach,
+                DayOfWeek.MONDAY, new TimeOfDay(15, 0));
+
+        timetable.addNewTrainingSession(session3);
+        timetable.addNewTrainingSession(session1);
+        timetable.addNewTrainingSession(session2);
+
+        Assertions.assertEquals(
+                List.of(session1, session2, session3),
+                getAllTrainings(timetable.getTrainingSessionsForDay(DayOfWeek.MONDAY))
+        );
+    }
+
+    @Test
+    void testSortedBySimilarTimeTrainings() {
+        Timetable timetable = new Timetable();
+
+        Group adultGroup = new Group("Акробатика для взрослых", Age.ADULT, 60);
+        Coach coach = new Coach("Васильев", "Николай", "Сергеевич");
+        TrainingSession adultSession1 = new TrainingSession(adultGroup, coach,
+                DayOfWeek.MONDAY, new TimeOfDay(13, 0));
+
+        TrainingSession adultSession2 = new TrainingSession(adultGroup, coach,
+                DayOfWeek.MONDAY, new TimeOfDay(14, 0));
+
+        TrainingSession adultSession3 = new TrainingSession(adultGroup, coach,
+                DayOfWeek.MONDAY, new TimeOfDay(15, 0));
+
+        Group childGroup = new Group("Акробатика для детей", Age.CHILD, 60);
+        TrainingSession childSession1 = new TrainingSession(childGroup, coach,
+                DayOfWeek.MONDAY, new TimeOfDay(13, 0));
+
+        TrainingSession childSession2 = new TrainingSession(childGroup, coach,
+                DayOfWeek.MONDAY, new TimeOfDay(14, 0));
+
+        TrainingSession childSession3 = new TrainingSession(childGroup, coach,
+                DayOfWeek.MONDAY, new TimeOfDay(15, 0));
+
+        timetable.addNewTrainingSession(adultSession3);
+        timetable.addNewTrainingSession(adultSession1);
+        timetable.addNewTrainingSession(adultSession2);
+
+        timetable.addNewTrainingSession(childSession3);
+        timetable.addNewTrainingSession(childSession1);
+        timetable.addNewTrainingSession(childSession2);
+
+        Assertions.assertEquals(
+                List.of(adultSession1, childSession1, adultSession2, childSession2, adultSession3, childSession3),
+                getAllTrainings(timetable.getTrainingSessionsForDay(DayOfWeek.MONDAY))
+        );
+    }
+
+    @Test
     void testEmptyTrainingCountTable() {
         Timetable timetable = new Timetable();
         Assertions.assertTrue(timetable.getCountByCoaches().isEmpty());
