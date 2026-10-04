@@ -17,18 +17,10 @@ public class Timetable {
     private final Map<Coach, CounterOfTrainings> trainingCountPerCoach = new HashMap<>();
 
     public void addNewTrainingSession(TrainingSession trainingSession) {
-        var trainingSessions = timetable.computeIfAbsent(trainingSession.dayOfWeek(), k -> new TreeMap<>())
-                .computeIfAbsent(trainingSession.timeOfDay(), k -> new ArrayList<>());
-
-        if (!containsCoachCollision(trainingSessions, trainingSession)) {
-            trainingSessions.add(trainingSession);
-            trainingCountPerCoach.computeIfAbsent(trainingSession.coach(), CounterOfTrainings::new).incrementCount();
-        }
-    }
-
-    /// Проверяет, что нет коллизий в расписании по группам у тренеров.
-    private boolean containsCoachCollision(Collection<TrainingSession> trainingSessionsPerDayAndTime, TrainingSession newSession) {
-        return trainingSessionsPerDayAndTime.stream().anyMatch(x -> x.coach().equals(newSession.coach()));
+        timetable.computeIfAbsent(trainingSession.dayOfWeek(), k -> new TreeMap<>())
+                .computeIfAbsent(trainingSession.timeOfDay(), k -> new ArrayList<>())
+                .add(trainingSession);
+        trainingCountPerCoach.computeIfAbsent(trainingSession.coach(), CounterOfTrainings::new).incrementCount();
     }
 
     public TreeMap<TimeOfDay, List<TrainingSession>> getTrainingSessionsForDay(DayOfWeek dayOfWeek) {

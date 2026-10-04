@@ -109,25 +109,6 @@ public class TimetableTest {
     }
 
     @Test
-    void testCoachCollisionResolving() {
-        Timetable timetable = new Timetable();
-
-        Group groupChild = new Group("Акробатика для детей", Age.CHILD, 60);
-        Coach coach = new Coach("Васильев", "Николай", "Сергеевич");
-        TrainingSession childTraining = new TrainingSession(groupChild, coach,
-                DayOfWeek.MONDAY, new TimeOfDay(13, 0));
-        timetable.addNewTrainingSession(childTraining);
-
-        Group groupAdult = new Group("Акробатика для взрослых", Age.ADULT, 90);
-        TrainingSession adultTraining = new TrainingSession(groupAdult, coach,
-                DayOfWeek.MONDAY, new TimeOfDay(13, 0));
-        timetable.addNewTrainingSession(adultTraining);
-        var trainings = timetable.getTrainingSessionsForDayAndTime(DayOfWeek.MONDAY, new TimeOfDay(13, 0));
-
-        Assertions.assertEquals(List.of(childTraining), trainings);
-    }
-
-    @Test
     void testEmptyTrainingCountTable() {
         Timetable timetable = new Timetable();
         Assertions.assertTrue(timetable.getCountByCoaches().isEmpty());
